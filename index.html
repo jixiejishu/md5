@@ -219,6 +219,57 @@
     cursor: grab;
   }
   .img-viewer img:active { cursor: grabbing; }
+/* ===== Catvod 历史图（突出「点击打开图片」） ===== */
+  .history-figure {
+    position: relative; margin: 0; border-radius: 16px; overflow: hidden;
+    border: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    background: var(--card); cursor: zoom-in; user-select: none;
+    transition: transform .2s, box-shadow .2s, border-color .2s;
+    box-shadow: 0 8px 30px rgba(0,0,0,.25);
+  }
+  .history-figure:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 14px 40px color-mix(in srgb, var(--accent) 30%, transparent); }
+  .history-figure img { display: block; width: 100%; height: auto; }
+  /* 常驻的「点击打开」标识（左上角徽章） */
+  .history-figure .zoom-badge {
+    position: absolute; top: 14px; left: 14px; z-index: 3;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: color-mix(in srgb, var(--accent) 92%, transparent); color: #fff;
+    padding: 7px 14px; border-radius: 999px; font-size: 13px; font-weight: 700;
+    box-shadow: 0 4px 14px rgba(0,0,0,.3); pointer-events: none;
+  }
+  .history-figure .zoom-badge .pulse { animation: pulse 1.6s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1; transform:scale(1);} 50%{opacity:.55; transform:scale(1.18);} }
+  /* 底部操作提示条 */
+  .history-figure figcaption {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
+    display: flex; align-items: center; justify-content: center; gap: 18px; flex-wrap: wrap;
+    padding: 12px; font-size: 12.5px; color: #fff;
+    background: linear-gradient(to top, rgba(0,0,0,.78), rgba(0,0,0,0));
+    pointer-events: none;
+  }
+  .history-figure figcaption span { display: inline-flex; align-items: center; gap: 5px; }
+  .history-tip { margin-top: 14px; font-size: 13px; color: var(--text-dim); text-align: center; }
+  .history-tip code { background: var(--tag); padding: 2px 8px; border-radius: 6px; }
+
+  /* ===== 图片加载失败占位 ===== */
+  .history-figure .error-placeholder {
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; padding: 60px 20px; color: var(--text-dim); text-align: center;
+  }
+  .history-figure.load-error .error-placeholder { display: flex; }
+  .history-figure.load-error img { display: none; }
+  .error-placeholder .error-icon { font-size: 44px; }
+  .error-placeholder .error-text { font-size: 15px; font-weight: 600; color: var(--text); }
+  .error-placeholder .error-hint { font-size: 12.5px; }
+  .error-placeholder .error-hint code {
+    background: var(--tag); padding: 2px 8px; border-radius: 6px;
+    word-break: break-all; max-width: 90vw; display: inline-block;
+  }
+  .error-placeholder .error-fix {
+    margin-top: 6px; font-size: 12px; max-width: 520px; line-height: 1.7;
+  }
+  .error-placeholder .error-fix b { color: var(--accent); }
+
   .img-viewer-close {
     position: absolute; top: 20px; right: 30px;
     color: #fff; font-size: 36px; cursor: pointer; z-index: 1001;
@@ -243,6 +294,7 @@
       <button id="themeBtn" class="btn" title="切换浅色 / 深色主题">🌙 深色</button>
       <button id="collapseBtn" class="btn" title="折叠 / 展开所有区块">▸ 折叠全部</button>
       <button id="topBtn" class="btn" title="回到顶部">⬆ 顶部</button>
+      <button id="bottomBtn" class="btn" title="直达底部">⬇ 底部</button>
     </div>
   </div>
 </header>
@@ -293,11 +345,34 @@
     <div class="sec-body"><div class="grid" id="docs"></div></div>
   </section>
 
-  <!-- 7. Catvod 重要项目历史 -->
+  <!-- 7. Catvod 重要项目历史（去重：仅此一张图，点击即打开图片查看器） -->
   <section class="section" id="s7">
     <div class="sec-head"><div class="num">7</div><h2>Catvod 重要项目历史</h2><span class="cnt" id="cnt7"></span><span class="toggle">▾</span></div>
-    <div class="sec-body"><div class="grid" id="history"></div></div>
+    <div class="sec-body">
+      <figure class="history-figure" id="historyFigure" title="点击查看大图（双击 / 滚轮 / 拖动 / 双指缩放）">
+        <span class="zoom-badge"><span class="pulse">🔍</span> 点击打开图片</span>
+        <!-- src 由 HISTORY_IMAGE 配置在 JS 中注入，支持「网络链接」或「本地路径」 -->
+        <img id="historyImg" src="" alt="Catvod 重要项目历史">
+        <figcaption>
+          <span>🖱️ 双击缩放</span>
+          <span>✋ 拖动平移</span>
+          <span>🤏 双指缩放</span>
+          <span>⌨️ Esc 关闭</span>
+        </figcaption>
+        <div class="error-placeholder">
+          <div class="error-icon">🖼️</div>
+          <div class="error-text">图片加载失败</div>
+          <div class="error-hint">当前路径：<code id="currentPath"></code></div>
+          <div class="error-fix">
+            请检查：<b>①</b> 本地图片是否放在网页同目录且文件名一致；<b>②</b> 或把 <code>HISTORY_IMAGE.url</code> 改成可访问的网络链接；<b>③</b> 若为本地路径，建议用本地服务器（<code>python -m http.server</code>）打开，避免浏览器 <code>file://</code> 限制。
+          </div>
+        </div>
+      </figure>
+      <p class="history-tip" id="historyTip">支持手机 / 平板 / 电脑 / 电视 / 投影 / 车机</p>
+    </div>
   </section>
+
+  
 
   <footer>
     数据来源：<b>网络搜集整理</b> · 感谢各位作者的无私分享与辛勤劳动<br>
@@ -316,6 +391,7 @@
 
 <script>
 /* ============ 数据（完整还原自 txt） ============ */
+/* ============ 数据（对齐 README.md，格式沿用原文件） ============ */
 const APPS = [
   { name: "UZN", icon: "🎬", sub: "多平台，支持 iOS，支持猫爪源（md5 源）；不开源，tg 中发布新版本", tags: ["多平台", "iOS", "猫爪源"],
     links: [
@@ -329,11 +405,11 @@ const APPS = [
       { lab: "项目", url: "https://github.com/ant-video/ant-video/", text: "GitHub: ant-video/ant-video" },
       { lab: "频道", url: "https://t.me/ant_video", text: "t.me/ant_video" }
     ] },
-  { name: "CatPawPlayer", icon: "🐾", sub: "PC 版猫爪源播放器", tags: ["PC", "猫爪源"],
+  { name: "AinanPlayer", icon: "🐾", sub: "原名 CatPawPlayer。PC 版猫爪源播放器", tags: ["PC", "猫爪源"],
     links: [
-      { lab: "项目", url: "https://github.com/Ainanya21/CatPawPlayer", text: "GitHub: Ainanya21/CatPawPlayer" },
-      { lab: "频道", url: "https://t.me/CatPawPlayer", text: "t.me/CatPawPlayer" },
-      { lab: "群组", url: "https://t.me/CatPawPlayerChat", text: "t.me/CatPawPlayerChat" }
+      { lab: "项目", url: "https://github.com/Ainanya21/AinanPlayer", text: "GitHub: Ainanya21/AinanPlayer" },
+      { lab: "频道", url: "https://t.me/AinanPlayer", text: "https://t.me/AinanPlayer" },
+      { lab: "群组", url: "https://t.me/AinanPlayerChat", text: "https://t.me/AinanPlayerChat" }
     ] },
   { name: "tvs", icon: "📱", sub: "MD5 接口壳，安卓和苹果", tags: ["安卓", "iOS"],
     links: [
@@ -356,14 +432,13 @@ const APPS = [
       { lab: "Hawk", url: "https://apps.apple.com/", text: "Hawk Player · 全能播放器，高级功能付费" },
       { lab: "Miraplay", url: "https://apps.apple.com/", text: "Miraplay 魔力云播 · 需外区 ID，高级功能付费" }
     ] },
-  { name: "网盘 专用", icon: "💾", sub: "网盘资料", tags: ["网盘", "网盘"],
+  { name: "网盘 ", icon: "💾", sub: "网盘资料", tags: ["网盘"],
     links: [
-      { lab: "裤佬网盘", url: "https://526900.xyz/ ", text: "裤佬网盘" },
-      { lab: "小飞机网盘", url: "https://share.feijipan.com/s/AnEEQTwX ", text: "小飞机网盘" },
-      { lab: "个人笔记云盘",url: "https://links.8uid.com/s/5c6459b28f73e65dafa5d0c9582e40a4  ", text: "个人笔记云盘" },
-      { lab: "127网盘", url: "https://www.go127.com/s/BdRH7  ", text: "127网盘" }
+      { lab: "裤佬网盘", url: "https://526900.xyz/", text: "裤佬网盘" },
+      { lab: "小飞机网盘", url: "https://share.feijipan.com/s/AnEEQTwX", text: "小飞机网盘" },
+      { lab: "个人笔记云盘", url: "https://links.8uid.com/s/5c6459b28f73e65dafa5d0c9582e40a4", text: "个人笔记云盘" },
+      { lab: "127网盘", url: "https://www.go127.com/s/BdRH7", text: "127网盘" }
     ] }
-
 ];
 
 const SOURCES = [
@@ -382,15 +457,18 @@ const SOURCES = [
   { name: "豆儿猫源", icon: "🫘", sub: "两个地址内容相同，二选一", tags: ["猫源"],
     links: [
       { lab: "源1", url: "https://gh-proxy.org/https://raw.githubusercontent.com/Darklessing/catvod/refs/heads/main/douer/index.js.md5", text: "GitHub（gh-proxy）" },
-      { lab: "源2", url: "https://woleigedouer:woleigedouer@catpaw.douer.me/index.js.md5", text: "catpaw.douer.me（含账号）" }
+      { lab: "源2", url: "https://woleigedouer:woleigedouer@catpaw.douer.me/index.js.md5", text: "woleigedouer" }
     ] },
   { name: "沐辰", icon: "🌊", sub: "沐辰维护的接口", tags: ["通用"],
     links: [
       { lab: "接口", url: "https://gh-proxy.org/https://raw.githubusercontent.com/4TVBox/Cat/refs/heads/main/index.js.md5", text: "4TVBox/Cat main", prefer: true }
     ] },
-  { name: "maflya", icon: "🦋", sub: "maflya 接口", tags: ["通用"],
+  { name: "maflya", icon: "🦋", sub: "maflya 接口（v1=mao 分支，v3=tangs 分支）", tags: ["通用"],
     links: [
-      { lab: "接口", url: "https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mao/index.js.md5", text: "MAfly1/mao", prefer: true }
+      { lab: "MAfly v1接口", url: "https://www.maflya.com/MAfly1/mao/index.js.md5", text: "MAfly v1", prefer: true },
+      { lab: "MAfly v1备用接口", url: "https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mao/index.js.md5", text: "MAfly v1备用", prefer: true },
+      { lab: "MAfly v3接口", url: "https://maflya.com/MAfly1/mao/tangs/index.js.md5", text: "MAfly v3", prefer: true },
+      { lab: "MAfly v3备用接口", url: "https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mao/tangs/index.js.md5", text: "MAfly v3备用", prefer: true }
     ] },
   { name: "泥潭", icon: "🪷", sub: "泥譚源，纯采集源", tags: ["采集源"],
     links: [
@@ -400,11 +478,15 @@ const SOURCES = [
     links: [
       { lab: "接口", url: "https://gh-proxy.org/https://raw.githubusercontent.com/Darklessing/catvod/refs/heads/main/smdl/index.js.md5", text: "smdl/index.js.md5", prefer: true }
     ] },
-  { name: "Y佬 JSTV 源", icon: "🧑‍💻", sub: "Y佬 的 JSTV 源接口", tags: ["JSTV"],
+  { name: "雪乃猫源", icon: "❄️", sub: "雪乃猫源，很久不更新", tags: ["猫源", "很久不更新"],
+    links: [
+      { lab: "接口", url: "https://gh-proxy.org/https://raw.githubusercontent.com/Darklessing/catvod/refs/heads/main/xuenai/index.config.js.md5", text: "xuenai/index.config.js.md5", prefer: true }
+    ] },
+  { name: "Y佬 JSTV 源", icon: "👤", sub: "Y佬 的 JSTV 源接口", tags: ["Y佬 JSTV"],
     links: [
       { lab: "接口", url: "https://gh-proxy.org/https://raw.githubusercontent.com/Yswag/xptv-extensions/refs/heads/jstv/index.js.md5", text: "xptv-extensions jstv", prefer: true }
     ] },
-  { name: "兔兔佬", icon: "🐰", sub: "兔兔佬的 JSTV 源接口", tags: ["JSTV"],
+  { name: "兔兔佬", icon: "🐰", sub: "兔兔佬的 JSTV 源接口", tags: ["兔兔佬JSTV"],
     links: [
       { lab: "接口", url: "https://gh-proxy.org/https://raw.githubusercontent.com/xiaobaitulele/xptv/refs/heads/main/jstv/index.js.md5", text: "xiaobaitulele/xptv main/jstv", prefer: true }
     ] }
@@ -412,27 +494,27 @@ const SOURCES = [
 
 const DANMAKU = [
   { group: "UZN 专用", icon: "🎯", items: [
-    { name: "LogVar 弹幕 API 互助交流群", url: "https://t.me/logvar_danmu_group" },
-    { name: "LogVar 弹幕 API 互助交流频道", url: "https://t.me/logvar_danmu_channel" },
-    { name: "项目地址（danmu_api.git）", url: "https://github.com/huangxd-/danmu_api.git" },
-    { name: "独立弹幕服务（danmu_api_server.cjs.md5）", url: "https://github.com/YYDS678/danmu_api/releases/download/latest/danmu_api_server.cjs.md5" }
+      { name: "LogVar 弹幕 API 互助交流群", url: "https://t.me/logvar_danmu_group" },
+      { name: "LogVar 弹幕 API 互助交流频道", url: "https://t.me/logvar_danmu_channel" },
+      { name: "项目地址（danmu_api.git）", url: "https://github.com/huangxd-/danmu_api.git" },
+      { name: "独立弹幕服务（danmu_api_server.cjs.md5）", url: "https://github.com/YYDS678/danmu_api/releases/download/latest/danmu_api_server.cjs.md5" },
   ] },
   { group: "星落群分享", icon: "⭐", items: [
-    { name: "星落群分享", url: "https://danmu.iyo.us.ci/theft-dastardly-prognosis-hula-agenda2-dropkick/danmaku" }
+      { name: "星落群分享", url: "https://danmu.iyo.us.ci/theft-dastardly-prognosis-hula-agenda2-dropkick/danmaku" },
   ] },
   { group: "路也迢迢分享", icon: "📺", items: [
-    { name: "📺 夏天", url: "https://dm.wodenas.xin/xiatianembydmff" },
-    { name: "📺 Lily", url: "https://danmu.longemby.com/lilyemby" },
-    { name: "📺 稳健", url: "https://dandan.wenjian.de/wenjian" },
-    { name: "📺 鸢尾", url: "https://justdanmu.irisnb.com/iris-danmu" },
-    { name: "📺 Uncle Joel", url: "https://dmfl.us.ci" },
-    { name: "📺 小助理", url: "https://danmu.qianting168.com/456765847636987622146901" },
-    { name: "📺 睡觉", url: "https://danmu.0000996.xyz/87654321" }
+      { name: "📺 夏天", url: "https://dm.wodenas.xin/xiatianembydmff" },
+      { name: "📺 Lily", url: "https://danmu.longemby.com/lilyemby" },
+      { name: "📺 稳健", url: "https://dandan.wenjian.de/wenjian" },
+      { name: "📺 鸢尾", url: "https://justdanmu.irisnb.com/iris-danmu" },
+      { name: "📺 Uncle Joel", url: "https://dmfl.us.ci" },
+      { name: "📺 小助理", url: "https://danmu.qianting168.com/456765847636987622146901" },
+      { name: "📺 睡觉", url: "https://danmu.0000996.xyz/87654321" },
   ] },
   { group: "匿名分享", icon: "💎", items: [
-    { name: "💎 匿名分享 1", url: "https://dm.199333.xyz/dm" },
-    { name: "💎 匿名分享 2", url: "https://Dm.lJiaoVm.com/luosen" },
-    { name: "💎 匿名分享 3", url: "https://danmu-api-five-pink.vercel.app/999999" }
+      { name: "💎 匿名分享 1", url: "https://dm.199333.xyz/dm" },
+      { name: "💎 匿名分享 2", url: "https://Dm.lJiaoVm.com/luosen" },
+      { name: "💎 匿名分享 3", url: "https://danmu-api-five-pink.vercel.app/999999" },
   ] }
 ];
 
@@ -453,7 +535,7 @@ const OPENSOURCE = [
       { lab: "源2", url: "http://wexfnw:wexfnw@cat.999888987.xyz/index.js.md5", text: "cat.999888987.xyz" },
       { lab: "源3", url: "http://wexfnw:wexfnw@cat.999888123.xyz/index.js.md5", text: "cat.999888123.xyz" }
     ] },
-  { name: "Darklessing / catvod", icon: "🐈", sub: "聚合多个猫源接口的项目仓库", tags: ["聚合"],
+  { name: "Darklessing / catvod", icon: "🐈", sub: "聚合多个猫源接口的项目仓库（豆儿/Lmentor/牛二/神秘/雪乃）", tags: ["聚合"],
     links: [
       { lab: "项目", url: "https://github.com/Darklessing/catvod", text: "GitHub: Darklessing/catvod", prefer: true },
       { lab: "豆儿", url: "https://gh-proxy.org/https://raw.githubusercontent.com/Darklessing/catvod/refs/heads/main/douer/index.js.md5", text: "douer" },
@@ -473,21 +555,24 @@ const OPENSOURCE = [
     ] },
   { name: "maflya", icon: "🦋", sub: "网站导航页 + GitHub + tg 频道/群组", tags: ["导航"],
     links: [
-      { lab: "官网1", url: "https://www.maflya.com", text: "maflya.com" },
+      { lab: "官网", url: "https://www.maflya.com", text: "maflya.com" },
       { lab: "项目", url: "https://github.com/mhmdxahmd/mafly", text: "GitHub: mhmdxahmd/mafly" },
       { lab: "频道", url: "https://t.me/flymaf", text: "t.me/flymaf" },
       { lab: "群组", url: "https://t.me/+vBTBjfJsag4xYmRk", text: "tg 群组" },
-      { lab: "接口", url: "https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mao/index.js.md5", text: "MAfly1/mao", prefer: true }
+      { lab: "v1接口", url: "https://www.maflya.com/MAfly1/mao/index.js.md5", text: "MAfly V1", prefer: true },
+      { lab: "v1备用接口", url: "https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mao/index.js.md5", text: "MAfly V1备用", prefer: true },
+      { lab: "v3接口", url: "https://maflya.com/MAfly1/mao/tangs/index.js.md5", text: "MAfly V3", prefer: true },
+      { lab: "v3备用接口", url: "https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mao/tangs/index.js.md5", text: "MAfly V3备用", prefer: true }
     ] },
   { name: "泥潭", icon: "🪷", sub: "泥譚源，纯采集源", tags: ["采集源"],
     links: [
       { lab: "项目", url: "https://github.com/nitan-tv/nitan", text: "GitHub: nitan-tv/nitan", prefer: true },
       { lab: "接口", url: "https://gh-proxy.org/https://raw.githubusercontent.com/nitan-tv/nitan/refs/heads/main/js/index.js.md5", text: "main/js" }
     ] },
-  { name: "Y佬", icon: "🧑‍💻", sub: "xptv-extensions 项目的 jstv 分支", tags: ["JSTV"],
+  { name: "Y佬", icon: "👤", sub: "xptv-extensions 项目的 jstv 分支（项目 / 分支 / 接口 三层分离）", tags: ["JSTV", "xptv"],
     links: [
       { lab: "项目", url: "https://github.com/Yswag/xptv-extensions", text: "GitHub: Yswag/xptv-extensions", prefer: true },
-      { lab: "分支", url: "https://github.com/Yswag/xptv-extensions/tree/jstv", text: "jstv 分支" },
+      { lab: "jstv 分支", url: "https://github.com/Yswag/xptv-extensions/tree/jstv", text: "jstv 分支" },
       { lab: "接口", url: "https://gh-proxy.org/https://raw.githubusercontent.com/Yswag/xptv-extensions/refs/heads/jstv/index.js.md5", text: "jstv/index.js.md5" }
     ] },
   { name: "兔兔佬", icon: "🐰", sub: "xiaobaitulele/xptv 项目接口", tags: ["JSTV"],
@@ -509,16 +594,92 @@ const DOCS = [
   { name: "路也迢迢", icon: "🛤️", sub: "tg 频道 + 群组（同 mozhaogroup）", tags: ["交流"],
     links: [
       { lab: "频道", url: "https://t.me/mozhaogroup", text: "t.me/mozhaogroup" },
-      { lab: "群组", url: "https://t.me/mozhaogroup", text: "t.me/mozhaogroup" }
+      { lab: "群组", url: "https://t.me/+ZdonqFdXZahjNDY1", text: "https://t.me/+ZdonqFdXZahjNDY1" }
     ] }
 ];
 
-const HISTORY = [
-  { name: "Catvod 重要项目历史", icon: "📜", sub: "梳理 catvod 相关重要项目、分支与历史变迁，支持双击缩放、手指拖动平移、双指 pinch 缩放，适配手机/平板/电脑/电视/投影/车机", tags: ["历史", "可缩放"],
-    links: [
-      { lab: "查看", url: "Catvod 重要项目历史.png", text: "打开可缩放历史页面（双击 / 拖动 / 双指缩放）", prefer: true }
-    ] }
-];
+/* ============ 历史图配置（旧版写法） ============ */
+const HISTORY_IMAGE = {
+  // 选项1: 网络图片链接（支持任何 http/https 地址）
+  // url: "https://github.com/jixiejishu/md5/raw/main/Catvod%20重要项目历史.png",
+
+  // 选项2: 本地图片（把图片放在网页同目录，写相对路径）
+  url: "./Catvod 重要项目历史.png",
+
+  // 选项3: 其他图床/镜像
+  // url: "https://your-cdn.com/path/to/image.png",
+
+  alt: "Catvod 重要项目历史",
+  caption: "Catvod 重要项目历史关系图"
+};
+
+const HISTORY = [];   // 旧版写法：第7节由 figure 渲染，不再用卡片
+
+function initHistoryImage() {
+  const img = document.getElementById('historyImg');
+  const fig = document.getElementById('historyFigure');
+  if (!img || !fig) return;
+
+  // 路径安全化：把 HISTORY_IMAGE.url 转成浏览器可正确加载的形式
+  //   · 本地路径（./ 或相对路径）：整体 encodeURI，中文 / 空格全部编码
+  //   · 网络链接：用 URL API 逐段 decodeURIComponent → encodeURIComponent 规范化，
+  //     既能补齐未编码的空格 / 中文，又绝不会把已编码的 %20 变成 %2520
+  const raw = HISTORY_IMAGE.url;
+  let src = raw;
+  if (!/^https?:\/\//i.test(raw)) {
+    src = raw.startsWith('./') ? '.' + encodeURI(raw.slice(1)) : encodeURI(raw);
+  } else {
+    try {
+      const u = new URL(raw);
+      u.pathname = u.pathname.split('/').map(seg => {
+        let decoded; try { decoded = decodeURIComponent(seg); } catch(e) { decoded = seg; }
+        return encodeURIComponent(decoded);
+      }).join('/');
+      src = u.toString();
+    } catch(e) {
+      src = encodeURI(raw).replace(/%25/g, '%');  // 兜底：还原被误编码的 %
+    }
+  }
+  img.src = src;
+  img.alt = HISTORY_IMAGE.alt;
+  const tip = document.getElementById('historyTip');
+  if (tip) tip.textContent = HISTORY_IMAGE.caption + ' · 支持手机 / 平板 / 电脑 / 电视 / 投影 / 车机';
+
+  const errPlaceholder = fig.querySelector('.error-placeholder');
+  const currentPath = document.getElementById('currentPath');
+  if (currentPath) currentPath.textContent = HISTORY_IMAGE.url;
+
+  img.onerror = () => {
+    fig.classList.add('load-error');
+    img.style.display = 'none';
+    if (errPlaceholder) errPlaceholder.style.display = 'flex';
+  };
+  img.onload = () => {
+    fig.classList.remove('load-error');
+    img.style.display = '';
+    if (errPlaceholder) errPlaceholder.style.display = 'none';
+  };
+}
+
+function bindHistoryImage() {
+  const fig = document.getElementById('historyFigure');
+  if (!fig) return;
+  // 事件委托：直接操作查看器 DOM，不依赖 openViewer 是否已初始化
+  fig.addEventListener('click', (e) => {
+    if (fig.classList.contains('load-error')) return;
+    if (e.target.closest('a, button, input')) return;
+    const img = document.getElementById('historyImg');
+    const src = img && img.src ? img.src : '';
+    if (!src) return;
+    const viewer = document.getElementById('imgViewer');
+    const viewerImg = document.getElementById('imgViewerImg');
+    if (!viewer || !viewerImg) return;
+    viewerImg.src = src;
+    viewer.classList.add('active');
+    // 重置变换
+    viewerImg.style.transform = 'translate(0,0) scale(1)';
+  });
+}
 
 /* ============ 渲染 ============ */
 function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -549,11 +710,11 @@ function cardTpl(item){
 function render(){
   const set = (id, arr)=>{ const el=document.getElementById(id); if(el) el.innerHTML = arr.map(cardTpl).join(''); };
   set('apps', APPS); set('sources', SOURCES); set('tmdb', TMDB);
-  set('opensource', OPENSOURCE); set('docs', DOCS); set('history', HISTORY);
+  set('opensource', OPENSOURCE); set('docs', DOCS);
 
   // counts
   const cnt = (id, n)=>{ const el=document.getElementById(id); if(el) el.textContent = `共 ${n} 项`; };
-  cnt('cnt1', APPS.length); cnt('cnt2', SOURCES.length); cnt('cnt5', OPENSOURCE.length); cnt('cnt6', DOCS.length); cnt('cnt7', HISTORY.length);
+  cnt('cnt1', APPS.length); cnt('cnt2', SOURCES.length); cnt('cnt5', OPENSOURCE.length); cnt('cnt6', DOCS.length);
 
   // danmaku
   const dmEl = document.getElementById('danmaku');
@@ -640,6 +801,8 @@ search.addEventListener('input', ()=>{
 /* ============ 回到顶部 ============ */
 const totop = document.getElementById('totop');
 document.getElementById('topBtn').addEventListener('click', ()=> window.scrollTo({top:0, behavior:'smooth'}));
+const bottomBtn = document.getElementById('bottomBtn');
+if (bottomBtn) bottomBtn.addEventListener('click', ()=> window.scrollTo({top: document.body.scrollHeight, behavior:'smooth'}));
 window.addEventListener('scroll', ()=>{ totop.classList.toggle('show', window.scrollY>400); });
 totop.addEventListener('click', ()=> window.scrollTo({top:0, behavior:'smooth'}));
 
@@ -701,13 +864,16 @@ function toggleSection(sec){
 /* init */
 initCollapse();
 render();
+initHistoryImage();
+bindHistoryImage();
+initViewer();
 
 /* ============ 图片查看器（支持双击、拖动、双指缩放） ============ */
-(function(){
+function initViewer() {
   const viewer = document.getElementById('imgViewer');
   const viewerImg = document.getElementById('imgViewerImg');
   const closeBtn = document.querySelector('.img-viewer-close');
-  if(!viewer || !viewerImg) return;
+  if (!viewer || !viewerImg) return;
 
   let scale = 1, panning = false, pointX = 0, pointY = 0, startX = 0, startY = 0;
   let initialDistance = null;
@@ -720,15 +886,15 @@ render();
   function updateTransform() {
     viewerImg.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
   }
-  function openViewer(src) {
+  window.openViewer = function(src) {
     viewerImg.src = src;
     viewer.classList.add('active');
     resetTransform();
-  }
-  function closeViewer() {
+  };
+  window.closeViewer = function() {
     viewer.classList.remove('active');
     setTimeout(()=> viewerImg.src = '', 200);
-  }
+  };
 
   closeBtn.addEventListener('click', closeViewer);
   viewer.addEventListener('click', (e) => { if(e.target === viewer) closeViewer(); });
@@ -781,10 +947,11 @@ render();
     const url = link.getAttribute('href') || '';
     if(url.toLowerCase().endsWith('.png')) {
       e.preventDefault();
-      openViewer(url);
+      if (window.openViewer) window.openViewer(url);
     }
   });
-})();
+}
+initViewer();
 </script>
 </body>
 </html>

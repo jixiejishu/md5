@@ -1,6 +1,14 @@
 # md5 影视导航
 
-> 数据整理自 网络收集。所有链接均整理自网络公开资料，可能随时失效或变更；部分地址含账号密码（如 `user:pass@...`）或境外域名，请以各项目**官方频道 / GitHub** 为准，自行甄别安全性。
+> 数据整理自网络收集。所有链接均整理自网络公开资料，可能随时失效或变更；部分地址含账号密码（如 `user:pass@...`）或境外域名，请以各项目**官方频道 / GitHub** 为准，自行甄别安全性。
+
+---
+
+## 0. Catvod 重要项目历史
+
+> 常见软件介绍关系（2026）：
+
+![常见软件介绍关系2026](https://github.com/jixiejishu/md5/raw/main/Catvod%20%E9%87%8D%E8%A6%81%E9%A1%B9%E7%9B%AE%E5%8E%86%E5%8F%B2.png)
 
 ---
 
@@ -9,12 +17,6 @@
 - 接口地址可能失效，请优先使用标注 **⭐首选** 的地址。
 - 多地址的源（如「牛二」五选一、「豆儿」二选一）**任选其一**即可，不必全部填写。
 - 文中弹幕 / 接口链接点击前请确认安全性。
----
-##   Catvod 重要项目历史
-
-
-<img width="1920" height="1080" alt="常见软件介绍关系2026" src="https://github.com/jixiejishu/md5/blob/main/Catvod%20%E9%87%8D%E8%A6%81%E9%A1%B9%E7%9B%AE%E5%8E%86%E5%8F%B2.png" />
-
 
 ---
 
@@ -33,11 +35,11 @@
 - 项目：[https://github.com/ant-video/ant-video/](https://github.com/ant-video/ant-video/)
 - 频道：[https://t.me/ant_video](https://t.me/ant_video)
 
-### 1.3 CatPawPlayer（md5 源）
+### 1.3 AinanPlayer（原名 CatPawPlayer，md5 源）
 - PC 版猫爪源播放器
-- 项目：[https://github.com/Ainanya21/CatPawPlayer](https://github.com/Ainanya21/CatPawPlayer)
-- 频道：[https://t.me/CatPawPlayer](https://t.me/CatPawPlayer)
-- 群组：[https://t.me/CatPawPlayerChat](https://t.me/CatPawPlayerChat)
+- 项目：[https://github.com/Ainanya21/AinanPlayer](https://github.com/Ainanya21/AinanPlayer)
+- 频道：[https://t.me/AinanPlayer](https://t.me/AinanPlayer)
+- 群组：[https://t.me/AinanPlayerChat](https://t.me/AinanPlayerChat)
 
 ### 1.4 tvs（md5 源）
 - md5 接口壳，安卓和苹果
@@ -62,29 +64,31 @@
 ### 1.7 iOS 专用
 
 #### 1.7.1 应用商店
-- [https://apps.apple.com/](https://apps.apple.com/)
+- App Store：[https://apps.apple.com/](https://apps.apple.com/)
 - **JS TV**：想要最大灵活度和脚本能力，国内可搜到，支持 md5 接口，高级功能付费
 - **Hawk Player**：想要全能播放器，国内可搜到，支持 md5 接口，高级功能付费
 
 #### 1.7.2 Miraplay（魔力云播）
 - 专门的猫爪源播放器，需外区 ID，高级功能付费，苹果 App Store 上架
 
-### 1.8网盘下载
+### 1.8 网盘下载
 
-网盘（版本可能会老一些，隔一段时间才能有空更新），影视可以用下面的链接直接下载     
-[https://share.feijipan.com/s/AnEEQTwX    ](https://share.feijipan.com/s/AnEEQTwX     "小飞机网盘")  
-[https://links.8uid.com/s/5c6459b28f73e65dafa5d0c9582e40a4      ](https://links.8uid.com/s/5c6459b28f73e65dafa5d0c9582e40a4        "个人笔记网盘")  
-[https://www.go127.com/s/BdRH7      ](https://www.go127.com/s/BdRH7       "127网盘")  
-第三方网盘  
-[https://526900.xyz/     ](https://526900.xyz/    "裤佬网盘  ")  
+> 网盘版本可能会老一些，隔一段时间才更新一次；影视可用下面的链接直接下载。
 
+- [小飞机网盘](https://share.feijipan.com/s/AnEEQTwX)
+- [个人笔记网盘](https://links.8uid.com/s/5c6459b28f73e65dafa5d0c9582e40a4)
+- [127 网盘](https://www.go127.com/s/BdRH7)
+
+第三方网盘：
+
+- [裤佬网盘](https://526900.xyz/)
 
 ---
 
 ## 2. md5 接口
 
 ### 2.1 牛二（⭐ 五选一）
-- ⭐ Miraplay 专用（实为通用接口，首选）：`https://9280.kstore.vip/cat/index.js.md5`
+- ⭐ **Miraplay 专用（实为通用接口，首选）**：`https://9280.kstore.vip/cat/index.js.md5`
 - `http://wexfnw:wexfnw@cat.xn--4kq62z5rby2qupq9ub.top/index.js.md5`
 - `http://wexfnw:wexfnw@cat.999888987.xyz/index.js.md5`
 - `http://wexfnw:wexfnw@cat.999888123.xyz/index.js.md5`
@@ -101,7 +105,10 @@
 - `https://gh-proxy.org/https://raw.githubusercontent.com/4TVBox/Cat/refs/heads/main/index.js.md5`
 
 ### 2.5 maflya
-- `https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mao/index.js.md5`
+- **v1**：`https://www.maflya.com/MAfly1/mao/index.js.md5`
+- **v1 备用**：`https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mao/index.js.md5`
+- **v3**：`https://maflya.com/MAfly1/mao/tangs/index.js.md5`
+- **v3 备用**：`https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mao/tangs/index.js.md5`
 
 ### 2.6 泥潭（泥譚源，纯采集源）
 - `https://gh-proxy.org/https://raw.githubusercontent.com/nitan-tv/nitan/refs/heads/main/js/index.js.md5`
@@ -140,10 +147,10 @@
 | 📺 小助理 | [https://danmu.qianting168.com/456765847636987622146901](https://danmu.qianting168.com/456765847636987622146901) |
 | 📺 睡觉 | [https://danmu.0000996.xyz/87654321](https://danmu.0000996.xyz/87654321) |
 
-### 💎 匿名分享
-- [https://dm.199333.xyz/dm](https://dm.199333.xyz/dm)
-- [https://Dm.lJiaoVm.com/luosen](https://Dm.lJiaoVm.com/luosen)
-- [https://danmu-api-five-pink.vercel.app/999999](https://danmu-api-five-pink.vercel.app/999999)
+### 3.4 匿名分享
+- 💎 [https://dm.199333.xyz/dm](https://dm.199333.xyz/dm)
+- 💎 [https://Dm.lJiaoVm.com/luosen](https://Dm.lJiaoVm.com/luosen)
+- 💎 [https://danmu-api-five-pink.vercel.app/999999](https://danmu-api-five-pink.vercel.app/999999)
 
 ---
 
@@ -180,7 +187,11 @@
 - 项目：[https://github.com/mhmdxahmd/mafly](https://github.com/mhmdxahmd/mafly)
 - 频道：[https://t.me/flymaf](https://t.me/flymaf)
 - 群组：[https://t.me/+vBTBjfJsag4xYmRk](https://t.me/+vBTBjfJsag4xYmRk)
-- 接口：`https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mao/index.js.md5`
+- 接口（v1 / v3）：
+  - **v1**：`https://www.maflya.com/MAfly1/mao/index.js.md5`
+  - **v1 备用**：`https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mao/index.js.md5`
+  - **v3**：`https://maflya.com/MAfly1/mao/tangs/index.js.md5`
+  - **v3 备用**：`https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mao/tangs/index.js.md5`
 
 ### 5.6 泥潭
 - 项目：[https://github.com/nitan-tv/nitan](https://github.com/nitan-tv/nitan)
@@ -207,7 +218,7 @@
 
 ### 6.3 路也迢迢
 - tg 频道：[https://t.me/mozhaogroup](https://t.me/mozhaogroup)
-- tg 群组：[https://t.me/mozhaogroup](https://t.me/mozhaogroup)
+- tg 群组：[https://t.me/+ZdonqFdXZahjNDY1](https://t.me/+ZdonqFdXZahjNDY1)
 
 ---
 
