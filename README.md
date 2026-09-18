@@ -179,7 +179,8 @@
 - 豆儿猫源（同 GitHub）：`https://woleigedouer:woleigedouer@catpaw.douer.me/index.js.md5`
 
 ### 5.4 沐辰
-- `https://gh-proxy.org/https://raw.githubusercontent.com/4TVBox/Cat/refs/heads/main/index.js.md5`
+- 项目：[https://github.com/4TVBox/Cat](https://github.com/4TVBox/Cat)
+- 接口：`https://gh-proxy.org/https://raw.githubusercontent.com/4TVBox/Cat/refs/heads/main/index.js.md5`
 
 ### 5.5 maflya
 - 官网：[https://www.maflya.com](https://www.maflya.com)
