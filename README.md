@@ -76,7 +76,7 @@
 
 - [小飞机网盘](https://share.feijipan.com/s/AnEEQTwX)
 - [个人笔记网盘](https://links.8uid.com/s/5c6459b28f73e65dafa5d0c9582e40a4)
-- [127 网盘](https://www.go127.com/s/BdRH7)
+
 
 第三方网盘：
 
@@ -120,6 +120,22 @@
 
 ### 2.9 兔兔佬
 - `https://gh-proxy.org/https://raw.githubusercontent.com/xiaobaitulele/xptv/refs/heads/main/jstv/index.js.md5`
+
+### 2.10 潇洒
+- 潇洒接口1：
+- `项目地址:`
+- `https://github.com/xiaosag/hmtv`
+- `https://gh-proxy.org/https://raw.githubusercontent.com/xiaosag/hmtv/main/index.js.md5`
+- 潇洒接口2：
+- `项目地址:`
+- `https://github.com/wangdacui003/hmtv`
+- `https://gh-proxy.org/https://raw.githubusercontent.com/wangdacui003/hmtv/main/index.js.md5`
+
+### 2.11 狸猫视界
+- 狸猫视界：
+- `https://github.com/LeelandoAi/LeeCatPaw`
+- 狸猫视界接口：
+- `https://gh-proxy.org/https://raw.githubusercontent.com/LeelandoAi/LeeCatPaw/refs/heads/main/index.js.md5`
 
 ---
 
