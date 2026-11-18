@@ -29,7 +29,7 @@
 - 群组：[https://t.me/uzVideoApp](https://t.me/uzVideoApp)
 - UZN（md5源）频道：[https://t.me/PPANZU](https://t.me/PPANZU)
 
-### 1.2 魔蚁（蚂蚁影视）
+### 1.2 蚂蚁影视
 - 多平台，支持猫爪源（md5 源）
 - 项目：[https://github.com/ant-video/ant-video/](https://github.com/ant-video/ant-video/)
 - 频道：[https://t.me/ant_video](https://t.me/ant_video)
